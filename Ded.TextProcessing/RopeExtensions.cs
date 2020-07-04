@@ -20,6 +20,10 @@ namespace Ded.TextProcessing
                 {
                     yield return rope.SubSequence(start, idx);
                     start = idx + 1;
+                    if (start == rope.Length())
+                    {
+                        break;
+                    }
                     idx = rope.IndexOf(c, start);
                 }
                 yield return rope.SubSequence(start);
