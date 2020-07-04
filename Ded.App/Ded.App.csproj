@@ -10,4 +10,7 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.9.11" />
     <PackageReference Include="Ropes" Version="1.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ded.TextProcessing\Ded.TextProcessing.csproj" />
+  </ItemGroup>
 </Project>

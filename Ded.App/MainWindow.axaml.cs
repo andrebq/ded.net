@@ -19,11 +19,7 @@ namespace Ded.App
         {
             AvaloniaXamlLoader.Load(this);
             EditorView ev = this.FindControl<EditorView>("Editor");
-            ev.Lines = new List<string>()
-            {
-                "abc",
-                "cde",
-            }.AsReadOnly();
+            ev.Lines = RopeBuilder.BUILD("abc\ncde");
         }
     }
 }

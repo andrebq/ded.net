@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+using Ded.TextProcessing;
+
 namespace Ded.App
 {
     public delegate void TextChanged(EditorView self);
@@ -24,10 +26,10 @@ namespace Ded.App
         public static readonly AttachedProperty<IBrush> BackgroundProperty =
             AvaloniaProperty.RegisterAttached<EditorView, Control, IBrush>(nameof(Background), Brushes.Black, inherits: true);
 
-        public static readonly DirectProperty<EditorView, IReadOnlyList<string>> LinesProperty =
-            AvaloniaProperty.RegisterDirect<EditorView, IReadOnlyList<string>>(nameof(Lines), o => o.Lines, (o, v) => o.Lines = v);
+        public static readonly DirectProperty<EditorView, Rope> LinesProperty =
+            AvaloniaProperty.RegisterDirect<EditorView, Rope>(nameof(Lines), o => o.Lines, (o, v) => o.Lines = v);
 
-        private static readonly IReadOnlyList<string> _EmptyList = new List<string>() { }.AsReadOnly();
+        private static readonly Rope _Empty = RopeBuilder.BUILD(string.Empty);
 
         public IBrush Foreground
         {
@@ -41,11 +43,11 @@ namespace Ded.App
             set => SetForeground(this, value);
         }
 
-        private IReadOnlyList<string> _Lines;
-        public IReadOnlyList<string> Lines
+        private Rope _Lines;
+        public Rope Lines
         {
-            get => _Lines ?? _EmptyList;
-            set => SetAndRaise<IReadOnlyList<string>>(LinesProperty, ref _Lines, value ?? _EmptyList);
+            get => _Lines ?? _Empty;
+            set => SetAndRaise<Rope>(LinesProperty, ref _Lines, value ?? _Empty);
         }
 
         private Size _canvasSize;
@@ -72,9 +74,9 @@ namespace Ded.App
             }
             context.FillRectangle(Background, new Rect(_canvasSize));
             var p = new Point();
-            foreach(var l in Lines)
+            foreach(var l in Lines.SplitBy('\n'))
             {
-                var ft = FormatLine(l);
+                var ft = FormatLine(l.ToString());
                 Debug.Print($"Foreground: {Foreground}");
                 context.DrawText(Foreground, p, ft);
                 p += new Point(0, ft.Bounds.Height);
