@@ -26,10 +26,10 @@ namespace Ded.App
         public static readonly AttachedProperty<IBrush> BackgroundProperty =
             AvaloniaProperty.RegisterAttached<EditorView, Control, IBrush>(nameof(Background), Brushes.Black, inherits: true);
 
-        public static readonly DirectProperty<EditorView, Rope> LinesProperty =
-            AvaloniaProperty.RegisterDirect<EditorView, Rope>(nameof(Lines), o => o.Lines, (o, v) => o.Lines = v);
+        public static readonly DirectProperty<EditorView, TextBuffer> LinesProperty =
+            AvaloniaProperty.RegisterDirect<EditorView, TextBuffer>(nameof(Lines), o => o.Lines, (o, v) => o.Lines = v);
 
-        private static readonly Rope _Empty = RopeBuilder.BUILD(string.Empty);
+        private static readonly TextBuffer _Empty = TextBuffer.Empty;
 
         public IBrush Foreground
         {
@@ -43,11 +43,11 @@ namespace Ded.App
             set => SetForeground(this, value);
         }
 
-        private Rope _Lines;
-        public Rope Lines
+        private TextBuffer _Lines;
+        public TextBuffer Lines
         {
             get => _Lines ?? _Empty;
-            set => SetAndRaise<Rope>(LinesProperty, ref _Lines, value ?? _Empty);
+            set => SetAndRaise<TextBuffer>(LinesProperty, ref _Lines, value ?? _Empty);
         }
 
         private Size _canvasSize;
@@ -74,13 +74,11 @@ namespace Ded.App
             }
             context.FillRectangle(Background, new Rect(_canvasSize));
             var p = new Point();
-            foreach(var l in Lines.SplitBy('\n'))
+            foreach(var l in Lines.Text.SplitBy('\n'))
             {
                 var ft = FormatLine(l.ToString());
-                Debug.Print($"Foreground: {Foreground}");
                 context.DrawText(Foreground, p, ft);
                 p += new Point(0, ft.Bounds.Height);
-                Debug.Print("rendering...");
             }
         }
 

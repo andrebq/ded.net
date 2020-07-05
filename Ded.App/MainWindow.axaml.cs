@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Ded.TextProcessing;
 using System.Collections.Generic;
 
 namespace Ded.App
@@ -19,7 +20,7 @@ namespace Ded.App
         {
             AvaloniaXamlLoader.Load(this);
             EditorView ev = this.FindControl<EditorView>("Editor");
-            ev.Lines = RopeBuilder.BUILD("abc\ncde");
+            ev.Lines = TextBuffer.Empty.Insert("abc\ncde".AsRope());
         }
     }
 }
