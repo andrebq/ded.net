@@ -14,6 +14,7 @@ using Ded.TextProcessing;
 using Avalonia.Input;
 using System.Linq;
 using System.Collections.Immutable;
+using SharpDX.DXGI;
 
 namespace Ded.App
 {
@@ -90,9 +91,17 @@ namespace Ded.App
             for(var i = cursorCoordinate.Row; i > 0; i--)
             {
                 cursorStartPoint = cursorStartPoint.WithY(cursorStartPoint.Y + formattedLines[i].Bounds.Height);
-                cursorEndPoint = cursorStartPoint.WithY(cursorStartPoint.Y + formattedLines[i].Bounds.Height);
             }
-            var pen = new Pen(Foreground, 3);
+            if (cursorCoordinate.Col != 0)
+            {
+                var line = formattedLines[cursorCoordinate.Row];
+                line = FormatLine(line.Text.Substring(0, cursorCoordinate.Col));
+                cursorStartPoint = cursorStartPoint.WithX(line.Bounds.Width + 1);
+                cursorEndPoint = cursorEndPoint.WithX(line.Bounds.Width + 1);
+                Debug.Print($"cc: {cursorCoordinate} / cs: {cursorStartPoint} / ce {cursorEndPoint}");
+            }
+            cursorEndPoint = cursorStartPoint.WithY(cursorStartPoint.Y + formattedLines[cursorCoordinate.Row].Bounds.Height);
+            var pen = new Pen(Foreground, 1);
             context.DrawLine(pen, cursorStartPoint, cursorEndPoint);
         }
 
@@ -115,6 +124,22 @@ namespace Ded.App
         protected override void OnTextInput(TextInputEventArgs e)
         {
             base.OnTextInput(e);
+            Lines = Lines.Insert(e.Text.AsRope());
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            if (e.Key == Key.Return)
+            {
+                Lines = Lines.Insert("\n".AsRope());
+            } else if (e.Key == Key.Back)
+            {
+                Lines = Lines.Remove(-1);
+            } else if (e.Key == Key.Delete)
+            {
+                Lines = Lines.Remove(1);
+            }
         }
     }
 }

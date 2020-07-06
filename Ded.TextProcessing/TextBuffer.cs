@@ -35,7 +35,7 @@ namespace Ded.TextProcessing
         {
             if (ammount < 0)
             {
-                return this.MoveCursor(ammount, CursorOffset.Current).Remove(ammount);
+                return this.MoveCursor(ammount, CursorOffset.Current).Remove(-ammount);
             }
             ammount = Math.Min(ammount, Text.Length() - Cursor);
             var t = Text.SubSequence(0, Cursor).Append(Text.SubSequence(Cursor + ammount));
