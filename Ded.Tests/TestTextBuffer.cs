@@ -17,10 +17,6 @@ namespace Ded.Tests
             Assert.AreEqual("ab", b.Insert("a".AsRope()).Insert("b".AsRope()).Text.ToString());
         }
 
-        public void TestRemove(string input, int offset, int remove, string expected)
-        {
-        }
-
         [TestMethod]
         public void TestMoveCursor()
         {

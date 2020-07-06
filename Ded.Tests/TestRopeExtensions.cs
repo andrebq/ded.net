@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Ded.TextProcessing;
 using System.Runtime.CompilerServices;
+using System.ComponentModel;
 
 namespace Ded.Tests
 {
@@ -23,6 +24,18 @@ namespace Ded.Tests
                 Assert.AreEqual(expected.Dequeue(), l.ToString());
             }
             Assert.AreEqual(0, expected.Count, "Queue should be empty after tests");
+        }
+
+        [DataRow("abc\n123", 0, 0, 0)]
+        [DataRow("abc\n123", 4, 1, 0)]
+        [DataRow("abc\n123", 1, 0, 1)]
+        [DataTestMethod]
+        public void IndexToLineColumn(string text, int idx, int row, int col)
+        {
+            var r = RopeBuilder.BUILD(text);
+            var coord = r.IndexToLineColumn(idx, '\n');
+            Assert.AreEqual(coord.Row, row, "Rows should be the same");
+            Assert.AreEqual(coord.Col, col, "Column should be the same");
         }
     }
 

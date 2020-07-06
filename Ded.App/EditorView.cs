@@ -11,6 +11,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 using Ded.TextProcessing;
+using Avalonia.Input;
+using System.Linq;
+using System.Collections.Immutable;
 
 namespace Ded.App
 {
@@ -62,6 +65,7 @@ namespace Ded.App
 
         static EditorView()
         {
+            FocusableProperty.OverrideDefaultValue(typeof(EditorView), true);
             ClipToBoundsProperty.OverrideDefaultValue<EditorView>(true);
             AffectsRender<EditorView>(LinesProperty, ForegroundProperty);
         }
@@ -74,12 +78,22 @@ namespace Ded.App
             }
             context.FillRectangle(Background, new Rect(_canvasSize));
             var p = new Point();
-            foreach(var l in Lines.Text.SplitBy('\n'))
+            var formattedLines = Lines.Text.SplitBy('\n').Select(r => FormatLine(r.ToString())).ToImmutableList();
+            foreach(var ft in formattedLines)
             {
-                var ft = FormatLine(l.ToString());
                 context.DrawText(Foreground, p, ft);
                 p += new Point(0, ft.Bounds.Height);
             }
+            var cursorCoordinate = Lines.Text.IndexToLineColumn(Lines.Cursor, '\n');
+            var cursorStartPoint = new Point(0, 0);
+            var cursorEndPoint = new Point(0, 0);
+            for(var i = cursorCoordinate.Row; i > 0; i--)
+            {
+                cursorStartPoint = cursorStartPoint.WithY(cursorStartPoint.Y + formattedLines[i].Bounds.Height);
+                cursorEndPoint = cursorStartPoint.WithY(cursorStartPoint.Y + formattedLines[i].Bounds.Height);
+            }
+            var pen = new Pen(Foreground, 3);
+            context.DrawLine(pen, cursorStartPoint, cursorEndPoint);
         }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -96,6 +110,11 @@ namespace Ded.App
             ft.Wrapping = TextWrapping.NoWrap;
             ft.Typeface = defaultFont;
             return ft;
+        }
+
+        protected override void OnTextInput(TextInputEventArgs e)
+        {
+            base.OnTextInput(e);
         }
     }
 }
