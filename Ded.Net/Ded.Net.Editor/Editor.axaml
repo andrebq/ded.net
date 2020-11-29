@@ -2,13 +2,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:ded="clr-namespace:Ded.Net.Editor"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Ded.Net.Editor.Editor">
 
-	<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" Orientation="Horizontal">
-		<Button>Load content</Button>
-		<Button>Save content</Button>
-		<Button>Run selection</Button>
+	<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" Orientation="Horizontal">
+			<Button>Load content</Button>
+			<Button>Save content</Button>
+			<Button>Run selection</Button>
+		</StackPanel>
+
+		<ded:TextGridView></ded:TextGridView>
 	</StackPanel>
 
 </UserControl>
